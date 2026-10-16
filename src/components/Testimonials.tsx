@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { testimonials } from "@/lib/content";
 import { ease } from "@/lib/motion";
@@ -10,16 +10,23 @@ import { SunRays } from "./SunRays";
 export function Testimonials() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [playing, setPlaying] = useState(true);
+  const reduce = useReducedMotion();
+  const autoplay = playing && !reduce;
   const count = testimonials.length;
   const t = testimonials[index];
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || !autoplay) return;
     const id = setTimeout(() => setIndex((i) => (i + 1) % count), 7000);
     return () => clearTimeout(id);
-  }, [index, paused, count]);
+  }, [index, paused, autoplay, count]);
 
-  const go = (delta: number) => setIndex((i) => (i + delta + count) % count);
+  // Manual navigation stops the rotation so the reader stays in control.
+  const go = (delta: number) => {
+    setPlaying(false);
+    setIndex((i) => (i + delta + count) % count);
+  };
 
   return (
     <section
@@ -40,14 +47,14 @@ export function Testimonials() {
           What homeowners say
         </h2>
 
-        <div className="mt-14 min-h-[19rem] sm:min-h-[16rem]" aria-live="polite">
+        <div className="mt-14 min-h-[19rem] sm:min-h-[16rem]" aria-live={autoplay ? "off" : "polite"}>
           <AnimatePresence mode="wait" initial={false}>
             <motion.figure
               key={index}
-              initial={{ opacity: 0, x: 40 }}
+              initial={{ opacity: 0, x: 24 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -40 }}
-              transition={{ duration: 0.8, ease }}
+              exit={{ opacity: 0, x: -24, transition: { duration: 0.2, ease } }}
+              transition={{ duration: 0.45, ease }}
             >
               <div aria-label="5 out of 5 stars" role="img" className="flex gap-1 text-brass">
                 {Array.from({ length: 5 }).map((_, i) => (
@@ -69,6 +76,16 @@ export function Testimonials() {
             {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
           </p>
           <div className="flex gap-2">
+            {!reduce && (
+              <button
+                type="button"
+                onClick={() => setPlaying((p) => !p)}
+                aria-label={playing ? "Pause review rotation" : "Play review rotation"}
+                className="pressable label-mono flex h-12 items-center rounded-[2px] border border-mullion px-4 hover:border-ink hover:bg-ink hover:text-limestone"
+              >
+                {playing ? "Pause" : "Play"}
+              </button>
+            )}
             {[
               { label: "Previous review", delta: -1, glyph: "←" },
               { label: "Next review", delta: 1, glyph: "→" },
@@ -78,7 +95,7 @@ export function Testimonials() {
                 type="button"
                 aria-label={b.label}
                 onClick={() => go(b.delta)}
-                className="flex h-12 w-12 items-center justify-center rounded-[2px] border border-mullion transition-colors duration-300 hover:border-ink hover:bg-ink hover:text-limestone"
+                className="flex h-12 w-12 items-center justify-center rounded-[2px] border border-mullion pressable hover:border-ink hover:bg-ink hover:text-limestone"
               >
                 {b.glyph}
               </button>

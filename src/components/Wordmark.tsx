@@ -1,7 +1,7 @@
 // Provisional typographic wordmark until the client has a logo.
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`flex items-baseline gap-2.5 ${className}`}>
+    <span translate="no" className={`flex items-baseline gap-2.5 ${className}`}>
       <span className="font-display text-[1.75rem] leading-none font-normal italic tracking-tight">
         DJ&apos;s
       </span>

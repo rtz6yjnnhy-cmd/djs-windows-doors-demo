@@ -1,10 +1,10 @@
-// Demo content. Phone and email are placeholders (555 numbers are reserved
-// for fiction); confirm every claim with the client before going live.
+// Demo content. The email is still a placeholder until DJ's confirms theirs;
+// confirm every claim with the client before going live.
 
 export const business = {
   name: "DJ's Windows and Doors Installation LLC",
-  phone: "(470) 555-0142",
-  phoneHref: "tel:+14705550142",
+  phone: "(470) 659-8625",
+  phoneHref: "tel:+14706598625",
   email: "quotes@djswindowsanddoors.com",
   hours: "Mon–Sat · 7am–6pm",
 };

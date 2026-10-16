@@ -29,10 +29,42 @@
   text-transform: uppercase;
 }
 
+/* Press feedback for buttons and button-like links */
+@utility pressable {
+  transition-property: background-color, border-color, color, scale;
+  transition-duration: 300ms, 300ms, 300ms, 160ms;
+  transition-timing-function: var(--ease-frame);
+  &:active {
+    scale: 0.97;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
     scroll-padding-top: 5rem;
+    /* Keeps focused fields clear of the fixed mobile CTA bar */
+    scroll-padding-bottom: 6rem;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a,
+  button,
+  input,
+  label,
+  textarea,
+  [role="slider"] {
+    touch-action: manipulation;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   body {

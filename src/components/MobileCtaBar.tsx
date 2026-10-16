@@ -18,16 +18,16 @@ export function MobileCtaBar() {
           className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-2 gap-2 border-t border-mullion bg-limestone/95 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md md:hidden"
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
-          exit={{ y: "100%" }}
-          transition={{ duration: 0.5, ease }}
+          exit={{ y: "100%", transition: { duration: 0.2, ease } }}
+          transition={{ duration: 0.35, ease }}
         >
           <a
             href={business.phoneHref}
-            className="rounded-[2px] border border-ink py-3.5 text-center font-medium text-ink"
+            className="pressable rounded-[2px] border border-ink py-3.5 text-center font-medium text-ink"
           >
             Call
           </a>
-          <a href="#contact" className="rounded-[2px] bg-clay py-3.5 text-center font-medium text-limestone">
+          <a href="#contact" className="pressable rounded-[2px] bg-clay py-3.5 text-center font-medium text-limestone">
             Free Quote
           </a>
         </motion.div>

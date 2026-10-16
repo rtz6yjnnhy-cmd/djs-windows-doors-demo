@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
 
 type Props = {
@@ -13,7 +13,8 @@ type Props = {
 export function SunRays({ className = "", intensity = 1 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x = useTransform(scrollYProgress, [0, 1], ["-12%", "12%"]);
+  const reduce = useReducedMotion();
+  const x = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["-12%", "12%"]);
   const opacity = useTransform(scrollYProgress, [0, 0.35, 0.65, 1], [0, intensity, intensity, 0]);
 
   return (

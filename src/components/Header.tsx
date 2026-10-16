@@ -28,10 +28,10 @@ export function Header() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-[background-color,color,box-shadow,padding] duration-500 ease-frame ${
+      className={`fixed inset-x-0 top-0 z-50 py-4 transition-[background-color,color,box-shadow] duration-300 ease-frame ${
         light
-          ? "bg-limestone/90 py-3 text-ink shadow-[0_1px_0_var(--color-mullion)] backdrop-blur-md"
-          : "py-5 text-limestone"
+          ? "bg-limestone/90 text-ink shadow-[0_1px_0_var(--color-mullion)] backdrop-blur-md"
+          : "text-limestone"
       }`}
     >
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-6 px-4 sm:px-8">
@@ -58,7 +58,7 @@ export function Header() {
           </a>
           <a
             href="#contact"
-            className="hidden rounded-[2px] bg-clay px-5 py-2.5 text-[0.9375rem] font-medium text-limestone transition-colors duration-300 hover:bg-clay-deep sm:inline-block"
+            className="hidden rounded-[2px] bg-clay px-5 py-2.5 text-[0.9375rem] font-medium text-limestone pressable hover:bg-clay-deep sm:inline-block"
           >
             Get a Free Quote
           </a>
@@ -85,11 +85,11 @@ export function Header() {
           <motion.nav
             id="mobile-menu"
             aria-label="Mobile"
-            className="fixed inset-x-0 top-[64px] bottom-0 bg-limestone px-4 pt-8 pb-28 lg:hidden"
+            className="fixed inset-x-0 top-[72px] bottom-0 overscroll-contain overflow-y-auto bg-limestone px-4 pt-8 pb-28 lg:hidden"
             initial={{ clipPath: "inset(0% 0% 100% 0%)" }}
             animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
-            exit={{ clipPath: "inset(0% 0% 100% 0%)" }}
-            transition={{ duration: 0.6, ease }}
+            exit={{ clipPath: "inset(0% 0% 100% 0%)", transition: { duration: 0.25, ease } }}
+            transition={{ duration: 0.4, ease }}
           >
             <ul className="border-t border-mullion">
               {nav.map((item, i) => (
@@ -98,7 +98,7 @@ export function Header() {
                   className="border-b border-mullion"
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, ease, delay: 0.15 + i * 0.05 }}
+                  transition={{ duration: 0.35, ease, delay: 0.1 + i * 0.04 }}
                 >
                   <a
                     href={item.href}

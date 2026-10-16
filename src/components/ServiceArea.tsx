@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { regions } from "@/lib/content";
 import { ease } from "@/lib/motion";
 import { Reveal } from "./Reveal";
@@ -45,6 +45,7 @@ const outline =
   }).join(" ") + " Z";
 
 export function ServiceArea() {
+  const reduce = useReducedMotion();
   return (
     <section id="area" className="relative overflow-hidden bg-pine py-24 text-limestone sm:py-36">
       <div className="mx-auto grid max-w-[1440px] gap-16 px-4 sm:px-8 lg:grid-cols-12 lg:items-center">
@@ -103,16 +104,18 @@ export function ServiceArea() {
                   viewport={{ once: true, margin: "0px 0px -20% 0px" }}
                   transition={{ duration: 0.6, delay }}
                 >
-                  <motion.circle
-                    cx={x}
-                    cy={y}
-                    r={c.major ? 14 : 10}
-                    fill="var(--color-sunlight)"
-                    initial={{ scale: 0.3, opacity: 0.5 }}
-                    animate={{ scale: 1.4, opacity: 0 }}
-                    transition={{ duration: 2.4, repeat: Infinity, delay, ease: "easeOut" }}
-                    style={{ transformOrigin: `${x}px ${y}px` }}
-                  />
+                  {!reduce && (
+                    <motion.circle
+                      cx={x}
+                      cy={y}
+                      r={c.major ? 14 : 10}
+                      fill="var(--color-sunlight)"
+                      initial={{ scale: 0.3, opacity: 0.5 }}
+                      animate={{ scale: 1.4, opacity: 0 }}
+                      transition={{ duration: 2.4, repeat: Infinity, delay, ease: "easeOut" }}
+                      style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                    />
+                  )}
                   <circle cx={x} cy={y} r={c.major ? 4.5 : 3} fill="var(--color-sunlight)" />
                   <text
                     x={x + 9}

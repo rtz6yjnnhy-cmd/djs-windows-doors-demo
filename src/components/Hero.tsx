@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import { useRef } from "react";
 import { business } from "@/lib/content";
@@ -11,8 +11,10 @@ const line = { duration: 1.4, ease };
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
-  const textY = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
+  // Parallax is scroll-linked, so MotionConfig does not switch it off by itself.
+  const reduce = useReducedMotion();
+  const imageY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["0%", "14%"]);
+  const textY = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["0%", "-30%"]);
   const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
   return (
@@ -24,9 +26,9 @@ export function Hero() {
       {/* The window opens from the center onto the house */}
       <motion.div
         className="absolute inset-0 -z-10"
-        initial={{ clipPath: "inset(18% 22% 18% 22%)" }}
-        animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
-        transition={{ duration: 1.8, ease, delay: 0.5 }}
+        initial={reduce ? { opacity: 0 } : { clipPath: "inset(18% 22% 18% 22%)" }}
+        animate={reduce ? { opacity: 1 } : { clipPath: "inset(0% 0% 0% 0%)" }}
+        transition={{ duration: reduce ? 0.8 : 1.8, ease, delay: reduce ? 0 : 0.5 }}
       >
         <motion.div
           className="absolute inset-0"
@@ -155,13 +157,13 @@ export function Hero() {
           <div className="flex flex-wrap items-center gap-4">
             <a
               href="#contact"
-              className="rounded-[2px] bg-clay px-7 py-4 font-medium text-limestone transition-colors duration-300 hover:bg-clay-deep"
+              className="rounded-[2px] bg-clay px-7 py-4 font-medium text-limestone pressable hover:bg-clay-deep"
             >
               Get a Free Quote
             </a>
             <a
               href={business.phoneHref}
-              className="group flex items-center gap-3 rounded-[2px] border border-limestone/40 px-7 py-4 font-medium transition-colors duration-300 hover:border-limestone hover:bg-limestone/10"
+              className="group flex items-center gap-3 rounded-[2px] border border-limestone/40 px-7 py-4 font-medium pressable hover:border-limestone hover:bg-limestone/10"
             >
               Call {business.phone}
             </a>

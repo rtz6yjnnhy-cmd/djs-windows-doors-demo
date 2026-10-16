@@ -40,14 +40,22 @@ export function Contact() {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const found = validate(new FormData(e.currentTarget));
+    const form = e.currentTarget;
+    const found = validate(new FormData(form));
     setErrors(found);
-    if (Object.keys(found).length === 0) setSent(true);
+    if (Object.keys(found).length === 0) {
+      setSent(true);
+      return;
+    }
+    // Move focus to the first field that needs fixing
+    const first = (["name", "contact", "email", "zip"] as const).find((k) => found[k]);
+    const target = first === "contact" ? "phone" : first;
+    form.querySelector<HTMLInputElement>(`[name="${target}"]`)?.focus();
   };
 
   const err = (key: keyof Errors) =>
     errors[key] ? (
-      <p id={`${key}-error`} className="mt-1.5 text-sm text-clay-deep">
+      <p id={`${key}-error`} role="alert" className="mt-1.5 text-sm text-clay-deep">
         {errors[key]}
       </p>
     ) : null;
@@ -131,7 +139,7 @@ export function Contact() {
                     onClick={() => setSent(false)}
                     className="label-mono mt-8 text-clay-deep underline-offset-4 hover:underline"
                   >
-                    Send another request
+                    Send Another Request
                   </button>
                 </motion.div>
               ) : (
@@ -174,6 +182,7 @@ export function Contact() {
                       name="email"
                       type="email"
                       autoComplete="email"
+                      spellCheck={false}
                       className={field}
                       aria-invalid={!!errors.email || !!errors.contact}
                       aria-describedby={errors.email ? "email-error" : undefined}
@@ -210,7 +219,7 @@ export function Contact() {
                             defaultChecked={i === 0}
                             className="peer sr-only"
                           />
-                          <span className="block rounded-[2px] border border-mullion px-4 py-2 text-[0.9375rem] transition-colors duration-300 peer-checked:border-pine peer-checked:bg-pine peer-checked:text-limestone peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-clay hover:border-ink">
+                          <span className="block rounded-[2px] border border-mullion px-4 py-2 text-[0.9375rem] pressable peer-checked:border-pine peer-checked:bg-pine peer-checked:text-limestone peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-clay hover:border-ink">
                             {s}
                           </span>
                         </label>
@@ -222,7 +231,7 @@ export function Contact() {
                     <textarea
                       name="message"
                       rows={4}
-                      placeholder="How many windows or doors, rough sizes, anything we should know."
+                      placeholder="e.g. 8 double-hung windows and a back door, about 36 × 60 in…"
                       className={`${field} resize-y`}
                     />
                   </label>
@@ -230,9 +239,9 @@ export function Contact() {
                     <p className="text-sm text-graphite">No obligation. We usually call back within one business day.</p>
                     <button
                       type="submit"
-                      className="rounded-[2px] bg-clay px-8 py-4 font-medium text-limestone transition-colors duration-300 hover:bg-clay-deep"
+                      className="rounded-[2px] bg-clay px-8 py-4 font-medium text-limestone pressable hover:bg-clay-deep"
                     >
-                      Request my free quote
+                      Request My Free Quote
                     </button>
                   </div>
                 </motion.form>

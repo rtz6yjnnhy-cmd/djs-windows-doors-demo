@@ -61,11 +61,10 @@ export function BeforeAfter() {
     setFromPointer(e.clientX);
   };
 
-  // Repeated key presses accumulate on the last target, not the mid-animation value.
-  const keyTarget = useRef<number | null>(null);
+  // Keyboard moves are instant: animating repeated key presses only adds lag.
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const step = e.shiftKey ? 0.1 : 0.04;
-    const from = pos.isAnimating() && keyTarget.current !== null ? keyTarget.current : pos.get();
+    const from = pos.get();
     const moves: Record<string, number> = {
       ArrowLeft: from - step,
       ArrowRight: from + step,
@@ -74,8 +73,8 @@ export function BeforeAfter() {
     };
     if (!(e.key in moves)) return;
     e.preventDefault();
-    keyTarget.current = Math.min(1, Math.max(0, moves[e.key]));
-    animate(pos, keyTarget.current, { duration: 0.35, ease });
+    pos.stop();
+    pos.set(Math.min(1, Math.max(0, moves[e.key])));
   };
 
   return (
@@ -111,7 +110,7 @@ export function BeforeAfter() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.7, ease }}
+                  transition={{ duration: 0.45, ease }}
                 >
                   <Image
                     src={project.image}
@@ -167,7 +166,7 @@ export function BeforeAfter() {
               </motion.div>
             </div>
             <p className="label-mono mt-4 text-graphite">
-              Illustrative preview · &quot;Before&quot; is a simulated treatment of the same photo.
+              Illustrative preview · “Before” is a simulated treatment of the same photo.
               Real DJ&apos;s project photos will replace these.
             </p>
           </Reveal>
