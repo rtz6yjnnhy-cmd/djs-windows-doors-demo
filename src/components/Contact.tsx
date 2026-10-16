@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import Image from "next/image";
+import { asset } from "@/lib/asset";
 import { useState, type FormEvent } from "react";
 import { business } from "@/lib/content";
 import { ease } from "@/lib/motion";
@@ -96,7 +97,7 @@ export function Contact() {
 
           <div className="relative mt-10 hidden aspect-[16/10] overflow-hidden lg:block">
             <Image
-              src="/images/contact-interior.jpg"
+              src={asset("/images/contact-interior.jpg")}
               alt="Sunlit living room with tall windows"
               fill
               sizes="40vw"

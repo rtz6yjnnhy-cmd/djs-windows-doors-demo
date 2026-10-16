@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
+import { asset } from "@/lib/asset";
 import { useRef } from "react";
 import { business } from "@/lib/content";
 import { ease } from "@/lib/motion";
@@ -38,7 +39,7 @@ export function Hero() {
           transition={{ duration: 2.6, ease, delay: 0.5 }}
         >
           <Image
-            src="/images/hero-craftsman-twilight.jpg"
+            src={asset("/images/hero-craftsman-twilight.jpg")}
             alt="Craftsman home at dusk with warm light glowing in every window"
             fill
             preload
