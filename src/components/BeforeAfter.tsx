@@ -17,9 +17,6 @@ import { ease } from "@/lib/motion";
 import { Reveal } from "./Reveal";
 import { SectionLabel } from "./SectionLabel";
 
-// Simulated "before": same photo, aged and dulled. Labeled as such on the page.
-const BEFORE_FILTER = "grayscale(0.65) sepia(0.4) brightness(0.68) contrast(0.85) blur(0.6px)";
-
 export function BeforeAfter() {
   const [active, setActive] = useState(0);
   const project = projects[active];
@@ -78,26 +75,26 @@ export function BeforeAfter() {
   };
 
   return (
-    <section id="projects" className="bg-plaster py-24 sm:py-36">
+    <section id="projects" className="bg-mist py-24 sm:py-36">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8">
         <Reveal className="grid gap-8 md:grid-cols-12 md:items-end">
           <div className="md:col-span-7">
-            <SectionLabel index="03">Before &amp; After</SectionLabel>
+            <SectionLabel index="04">Before &amp; After</SectionLabel>
             <h2 className="mt-6 font-display text-[clamp(2.25rem,4.5vw,4rem)] leading-[1.05] font-normal tracking-[-0.015em]">
-              Slide the sash. <em className="text-clay">See the difference.</em>
+              Slide the sash. <em className="text-royal">See the difference.</em>
             </h2>
           </div>
-          <p className="max-w-md text-graphite md:col-span-5">
-            Drag the frame like a sliding window to compare the house before and after new
-            windows and doors.
+          <p className="max-w-md text-slate md:col-span-5">
+            Real DJ&apos;s jobs, photographed on site. Drag the frame like a sliding window to compare
+            the same window or door before and after.
           </p>
         </Reveal>
 
         <div className="mt-14 grid gap-10 lg:grid-cols-12">
-          <Reveal className="lg:col-span-8" y={40}>
+          <Reveal className="mx-auto w-full max-w-[560px] lg:col-span-6 lg:max-w-none xl:col-span-5" y={40}>
             <div
               ref={frameRef}
-              className="relative aspect-[4/3] cursor-ew-resize touch-pan-y select-none overflow-hidden bg-ink sm:aspect-[16/10]"
+              className="relative aspect-[4/5] cursor-ew-resize touch-pan-y select-none overflow-hidden bg-navy"
               onPointerDown={onPointerDown}
               onPointerMove={(e) => dragging.current && setFromPointer(e.clientX)}
               onPointerUp={() => (dragging.current = false)}
@@ -113,37 +110,34 @@ export function BeforeAfter() {
                   transition={{ duration: 0.45, ease }}
                 >
                   <Image
-                    src={project.image}
+                    src={project.after}
                     alt={`After: ${project.alt}`}
                     fill
-                    sizes="(min-width: 1024px) 66vw, 100vw"
+                    sizes="(min-width: 1024px) 40vw, 100vw"
                     className="pointer-events-none object-cover"
                     draggable={false}
                   />
                   <motion.div className="absolute inset-0" style={{ clipPath: beforeClip }}>
                     <Image
-                      src={project.image}
-                      alt=""
+                      src={project.before}
+                      alt={`${project.beforeLabel}: ${project.alt}`}
                       fill
-                      sizes="(min-width: 1024px) 66vw, 100vw"
-                      className="pointer-events-none scale-[1.01] object-cover"
-                      style={{ filter: BEFORE_FILTER }}
+                      sizes="(min-width: 1024px) 40vw, 100vw"
+                      className="pointer-events-none object-cover"
                       draggable={false}
                     />
-                    {/* Hazy, weathered glass */}
-                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_40%,rgba(232,224,210,0.18),rgba(28,27,25,0.25))]" />
                   </motion.div>
                 </motion.div>
               </AnimatePresence>
 
-              <span className="label-mono pointer-events-none absolute left-4 top-4 z-10 bg-ink/80 px-2 py-1 text-limestone">
-                Before
+              <span className="label-mono pointer-events-none absolute left-4 top-4 z-10 bg-navy/85 px-2 py-1 text-paper">
+                {project.beforeLabel}
               </span>
-              <span className="label-mono pointer-events-none absolute right-4 top-4 z-10 bg-limestone/90 px-2 py-1 text-ink">
+              <span className="label-mono pointer-events-none absolute right-4 top-4 z-10 bg-paper/90 px-2 py-1 text-ink">
                 After
               </span>
 
-              {/* The sash: frame rail with a brass pull */}
+              {/* The sash: frame rail with an amber pull */}
               <motion.div
                 role="slider"
                 tabIndex={0}
@@ -151,33 +145,33 @@ export function BeforeAfter() {
                 aria-valuemin={0}
                 aria-valuemax={100}
                 aria-valuenow={ariaPos}
-                aria-valuetext={`${ariaPos}% before`}
+                aria-valuetext={`${ariaPos}% ${project.beforeLabel.toLowerCase()}`}
                 onKeyDown={onKeyDown}
                 style={{ left: sashLeft }}
-                className="absolute inset-y-0 z-20 w-3 -translate-x-1/2 bg-limestone shadow-[0_0_0_1px_rgba(28,27,25,0.25),0_0_30px_rgba(0,0,0,0.35)] outline-offset-0"
+                className="absolute inset-y-0 z-20 w-3 -translate-x-1/2 bg-paper shadow-[0_0_0_1px_rgba(10,22,40,0.25),0_0_30px_rgba(0,0,0,0.35)] outline-offset-0"
               >
-                <span aria-hidden className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-mullion" />
+                <span aria-hidden className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-line" />
                 <span
                   aria-hidden
-                  className="absolute left-1/2 top-1/2 flex h-16 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[2px] bg-limestone shadow-[0_0_0_1px_var(--color-mullion)]"
+                  className="absolute left-1/2 top-1/2 flex h-16 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-[2px] bg-paper shadow-[0_0_0_1px_var(--color-line)]"
                 >
-                  <span className="h-9 w-1.5 rounded-full bg-brass" />
+                  <span className="h-9 w-1.5 rounded-full bg-amber" />
                 </span>
               </motion.div>
             </div>
-            <p className="label-mono mt-4 text-graphite">
-              Illustrative preview · “Before” is a simulated treatment of the same photo.
-              Real DJ&apos;s project photos will replace these.
+            <p className="label-mono mt-4 text-slate">
+              Real DJ&apos;s projects · Same opening, photographed on site
+              {project.beforeLabel === "During" ? " during and after the install" : " before and after"}
             </p>
           </Reveal>
 
-          <div className="lg:col-span-4">
-            <p className="label-mono text-graphite">Select a project</p>
-            <ul className="mt-4 border-t border-mullion">
+          <div className="lg:col-span-6 xl:col-span-6 xl:col-start-7">
+            <p className="label-mono text-slate">Select a project</p>
+            <ul className="mt-4 border-t border-line">
               {projects.map((p, i) => {
                 const selected = i === active;
                 return (
-                  <li key={p.id} className="border-b border-mullion">
+                  <li key={p.id} className="border-b border-line">
                     <button
                       type="button"
                       aria-pressed={selected}
@@ -186,20 +180,20 @@ export function BeforeAfter() {
                     >
                       <motion.span
                         aria-hidden
-                        className="absolute inset-y-4 left-0 w-0.5 origin-top bg-clay"
+                        className="absolute inset-y-4 left-0 w-0.5 origin-top bg-royal"
                         initial={false}
                         animate={{ scaleY: selected ? 1 : 0 }}
                         transition={{ duration: 0.5, ease }}
                       />
-                      <span className="label-mono text-graphite">
-                        Sample project {p.id}
+                      <span className="label-mono text-slate">
+                        Project {p.id} · {p.beforeLabel} &amp; after
                       </span>
                       <span
-                        className={`mt-2 block font-display text-2xl transition-colors duration-300 ${selected ? "text-ink" : "text-graphite group-hover:text-ink"}`}
+                        className={`mt-2 block font-display text-2xl transition-colors duration-300 ${selected ? "text-ink" : "text-slate group-hover:text-ink"}`}
                       >
                         {p.title}
                       </span>
-                      <span className="label-mono mt-2 block text-clay-deep">
+                      <span className="label-mono mt-2 block text-royal-deep">
                         {p.spec}
                       </span>
                     </button>
@@ -207,6 +201,18 @@ export function BeforeAfter() {
                 );
               })}
             </ul>
+            <div className="mt-10 bg-paper p-6 sm:p-8">
+              <p className="font-display text-2xl">Want this on your house?</p>
+              <p className="mt-2 max-w-md text-slate">
+                Tell us which windows or doors you&apos;re thinking about and we&apos;ll come measure.
+              </p>
+              <a
+                href="#contact"
+                className="pressable mt-6 inline-block rounded-[2px] bg-royal px-6 py-3 font-medium text-paper hover:bg-royal-deep"
+              >
+                Get a Free Quote
+              </a>
+            </div>
           </div>
         </div>
       </div>

@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-limestone: #f4efe6;
-  --color-plaster: #e8e0d2;
-  --color-ink: #1c1b19;
-  --color-graphite: #4a4743;
-  --color-mullion: #cfc5b4;
-  --color-pine: #24392f;
-  --color-pine-deep: #1a2b23;
-  --color-clay: #a84b24;
-  --color-clay-deep: #863a1b;
-  --color-brass: #c39a5b;
+  /* Brand palette, taken from the DJ's logo */
+  --color-paper: #ffffff;
+  --color-mist: #f2f4f7;
+  --color-line: #d6dce5;
+  --color-ink: #1f242c;
+  --color-slate: #566170;
+  --color-navy: #0a1628;
+  --color-navy-800: #11274a;
+  --color-royal: #1e4fa3;
+  --color-royal-deep: #173f82;
+  --color-sky: #a9c4ee;
+  --color-amber: #d4a24c;
   --color-sunlight: #f2c879;
 
   --font-display: var(--font-newsreader), Georgia, serif;
@@ -68,7 +70,7 @@
   }
 
   body {
-    background: var(--color-limestone);
+    background: var(--color-paper);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: 1.0625rem;
@@ -92,7 +94,7 @@
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-clay);
+    outline: 2px solid var(--color-royal);
     outline-offset: 3px;
   }
 

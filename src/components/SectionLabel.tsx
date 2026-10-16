@@ -6,7 +6,7 @@ type Props = {
 
 // Drawing-sheet style label: "02 — SERVICES" with a short rule.
 export function SectionLabel({ index, children, tone = "light" }: Props) {
-  const color = tone === "dark" ? "text-brass" : "text-clay-deep";
+  const color = tone === "dark" ? "text-amber" : "text-royal-deep";
   return (
     <p className={`label-mono flex items-center gap-3 ${color}`}>
       <span>{index}</span>

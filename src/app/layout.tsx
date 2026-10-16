@@ -22,13 +22,13 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DJ's Windows and Doors Installation | Georgia",
+  title: "DJ's Windows & Doors | Atlanta, GA",
   description:
-    "Residential window and door installation and material sales across Georgia. Measured, installed and sealed right. Request a free quote.",
+    "Window and door replacement, sales and installation in Metro Atlanta and across Georgia. Installed right. Request a free quote.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1c1b19",
+  themeColor: "#0a1628",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

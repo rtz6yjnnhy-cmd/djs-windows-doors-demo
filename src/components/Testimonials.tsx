@@ -31,7 +31,7 @@ export function Testimonials() {
   return (
     <section
       aria-labelledby="reviews-title"
-      className="relative overflow-hidden border-t border-mullion bg-limestone py-24 sm:py-36"
+      className="relative overflow-hidden border-t border-line bg-paper py-24 sm:py-36"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -40,8 +40,8 @@ export function Testimonials() {
       <SunRays intensity={1} />
       <div className="relative mx-auto max-w-[1100px] px-4 sm:px-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <SectionLabel index="05">Reviews</SectionLabel>
-          <p className="label-mono text-graphite">Sample reviews for this demo</p>
+          <SectionLabel index="06">Reviews</SectionLabel>
+          <p className="label-mono text-slate">Sample reviews for this demo</p>
         </div>
         <h2 id="reviews-title" className="sr-only">
           What homeowners say
@@ -56,7 +56,7 @@ export function Testimonials() {
               exit={{ opacity: 0, x: -24, transition: { duration: 0.2, ease } }}
               transition={{ duration: 0.45, ease }}
             >
-              <div aria-label="5 out of 5 stars" role="img" className="flex gap-1 text-brass">
+              <div aria-label="5 out of 5 stars" role="img" className="flex gap-1 text-amber">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <svg key={i} viewBox="0 0 20 20" className="h-4 w-4 fill-current" aria-hidden>
                     <path d="M10 1.5l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L1.3 7.8l6.1-.7z" />
@@ -66,13 +66,13 @@ export function Testimonials() {
               <blockquote className="mt-8 font-display text-[clamp(1.75rem,3.6vw,3rem)] leading-[1.2] font-light italic tracking-[-0.01em]">
                 &ldquo;{t.quote}&rdquo;
               </blockquote>
-              <figcaption className="label-mono mt-8 text-graphite">— {t.who}</figcaption>
+              <figcaption className="label-mono mt-8 text-slate">— {t.who}</figcaption>
             </motion.figure>
           </AnimatePresence>
         </div>
 
-        <div className="mt-10 flex items-center justify-between border-t border-mullion pt-6">
-          <p className="label-mono tabular-nums text-graphite">
+        <div className="mt-10 flex items-center justify-between border-t border-line pt-6">
+          <p className="label-mono tabular-nums text-slate">
             {String(index + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
           </p>
           <div className="flex gap-2">
@@ -81,7 +81,7 @@ export function Testimonials() {
                 type="button"
                 onClick={() => setPlaying((p) => !p)}
                 aria-label={playing ? "Pause review rotation" : "Play review rotation"}
-                className="pressable label-mono flex h-12 items-center rounded-[2px] border border-mullion px-4 hover:border-ink hover:bg-ink hover:text-limestone"
+                className="pressable label-mono flex h-12 items-center rounded-[2px] border border-line px-4 hover:border-ink hover:bg-navy hover:text-paper"
               >
                 {playing ? "Pause" : "Play"}
               </button>
@@ -95,7 +95,7 @@ export function Testimonials() {
                 type="button"
                 aria-label={b.label}
                 onClick={() => go(b.delta)}
-                className="flex h-12 w-12 items-center justify-center rounded-[2px] border border-mullion pressable hover:border-ink hover:bg-ink hover:text-limestone"
+                className="flex h-12 w-12 items-center justify-center rounded-[2px] border border-line pressable hover:border-ink hover:bg-navy hover:text-paper"
               >
                 {b.glyph}
               </button>

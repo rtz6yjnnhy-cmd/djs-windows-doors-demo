@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import { regions } from "@/lib/content";
+import { metroCities, otherRegions } from "@/lib/content";
 import { ease } from "@/lib/motion";
 import { Reveal } from "./Reveal";
 import { SectionLabel } from "./SectionLabel";
@@ -17,18 +17,17 @@ const BORDER: [number, number][] = [
   [-85.06, 31.6], [-85.06, 32.0], [-84.95, 32.3], [-85.0, 32.55], [-85.18, 32.86],
 ];
 
-const CITIES: { name: string; at: [number, number]; major?: boolean }[] = [
-  { name: "Atlanta", at: [-84.39, 33.75], major: true },
-  { name: "Savannah", at: [-81.09, 32.08], major: true },
+// Metro Atlanta is the home market; the rest of Georgia is shown, quieter.
+const ATLANTA: [number, number] = [-84.39, 33.75];
+const CITIES: { name: string; at: [number, number] }[] = [
+  { name: "Savannah", at: [-81.09, 32.08] },
   { name: "Augusta", at: [-81.97, 33.47] },
   { name: "Macon", at: [-83.63, 32.84] },
   { name: "Columbus", at: [-84.99, 32.46] },
   { name: "Athens", at: [-83.38, 33.96] },
-  { name: "Gainesville", at: [-83.82, 34.3] },
   { name: "Dalton", at: [-84.97, 34.77] },
   { name: "Albany", at: [-84.16, 31.58] },
   { name: "Valdosta", at: [-83.28, 30.83] },
-  { name: "Brunswick", at: [-81.49, 31.15] },
 ];
 
 // Equirectangular projection, corrected for Georgia's latitude.
@@ -46,94 +45,114 @@ const outline =
 
 export function ServiceArea() {
   const reduce = useReducedMotion();
+  const atl = project(ATLANTA);
+  const view = { once: true, margin: "0px 0px -20% 0px" };
   return (
-    <section id="area" className="relative overflow-hidden bg-pine py-24 text-limestone sm:py-36">
+    <section id="area" className="relative overflow-hidden bg-navy py-24 text-paper sm:py-36">
       <div className="mx-auto grid max-w-[1440px] gap-16 px-4 sm:px-8 lg:grid-cols-12 lg:items-center">
         <div className="lg:col-span-6">
           <Reveal>
-            <SectionLabel index="06" tone="dark">
+            <SectionLabel index="07" tone="dark">
               Service Area
             </SectionLabel>
             <h2 className="mt-6 font-display text-[clamp(2.25rem,4.5vw,4rem)] leading-[1.05] font-normal tracking-[-0.015em]">
-              From the mountains
+              Atlanta &amp; the
               <br />
-              <em className="text-sunlight">to the coast.</em>
+              <em className="text-sunlight">metro area.</em>
             </h2>
-            <p className="mt-8 max-w-md text-limestone/75">
-              We install and deliver statewide. Wherever your home is in Georgia, the quote and
-              the crew come to you.
+            <p className="mt-8 max-w-md text-paper/80">
+              Metro Atlanta is home. Most of our windows and doors go into houses within an hour
+              of the city, so we&apos;re close by for the quote, the install and anything after.
             </p>
           </Reveal>
 
-          <dl className="mt-12 grid gap-x-10 sm:grid-cols-2">
-            {regions.map((r, i) => (
-              <Reveal key={r.name} delay={i * 0.06} className="border-t border-limestone/15 py-5">
-                <dt className="font-display text-xl">{r.name}</dt>
-                <dd className="label-mono mt-1.5 text-limestone/60">{r.cities}</dd>
-              </Reveal>
-            ))}
-          </dl>
+          <Reveal delay={0.1} className="mt-12 border-t border-paper/15 pt-8">
+            <h3 className="label-mono text-amber">Metro Atlanta cities we serve</h3>
+            <ul className="mt-5 grid grid-cols-2 gap-x-6 gap-y-2.5 font-display text-xl sm:grid-cols-3">
+              {metroCities.map((c) => (
+                <li key={c}>{c}</li>
+              ))}
+            </ul>
+          </Reveal>
+
+          <Reveal delay={0.2} className="mt-10 border-t border-paper/15 pt-6">
+            <p className="text-[0.9375rem] text-paper/65">
+              <span className="text-paper/85">Also serving the rest of Georgia</span> for larger
+              projects: {otherRegions}.
+            </p>
+          </Reveal>
         </div>
 
         <div className="lg:col-span-6">
           <svg
             viewBox="0 0 440 480"
             role="img"
-            aria-label="Map of Georgia showing service across the whole state"
+            aria-label="Map of Georgia with Metro Atlanta highlighted as the main service area"
             className="mx-auto w-full max-w-[520px]"
           >
             <motion.path
               d={outline}
-              fill="rgba(195,154,91,0.06)"
-              stroke="var(--color-brass)"
+              fill="rgba(212,162,76,0.05)"
+              stroke="var(--color-amber)"
+              strokeOpacity={0.55}
               strokeWidth={1.25}
               strokeLinejoin="round"
               initial={{ pathLength: 0, fillOpacity: 0 }}
               whileInView={{ pathLength: 1, fillOpacity: 1 }}
-              viewport={{ once: true, margin: "0px 0px -20% 0px" }}
+              viewport={view}
               transition={{ pathLength: { duration: 2.4, ease }, fillOpacity: { duration: 1, delay: 2 } }}
             />
+
+            {/* The rest of the state: small, quiet markers */}
             {CITIES.map((c, i) => {
               const { x, y } = project(c.at);
-              const delay = 1.2 + i * 0.12;
               return (
                 <motion.g
                   key={c.name}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
-                  viewport={{ once: true, margin: "0px 0px -20% 0px" }}
-                  transition={{ duration: 0.6, delay }}
+                  viewport={view}
+                  transition={{ duration: 0.6, delay: 1.8 + i * 0.08 }}
                 >
-                  {!reduce && (
-                    <motion.circle
-                      cx={x}
-                      cy={y}
-                      r={c.major ? 14 : 10}
-                      fill="var(--color-sunlight)"
-                      initial={{ scale: 0.3, opacity: 0.5 }}
-                      animate={{ scale: 1.4, opacity: 0 }}
-                      transition={{ duration: 2.4, repeat: Infinity, delay, ease: "easeOut" }}
-                      style={{ transformBox: "fill-box", transformOrigin: "center" }}
-                    />
-                  )}
-                  <circle cx={x} cy={y} r={c.major ? 4.5 : 3} fill="var(--color-sunlight)" />
-                  <text
-                    x={x + 9}
-                    y={y + 3.5}
-                    fill="var(--color-limestone)"
-                    fillOpacity={0.8}
-                    fontSize={c.major ? 12 : 10}
-                    fontFamily="var(--font-mono)"
-                    letterSpacing="0.06em"
-                  >
+                  <circle cx={x} cy={y} r={2.5} fill="var(--color-paper)" fillOpacity={0.6} />
+                  <text x={x + 7} y={y + 3} fill="var(--color-paper)" fillOpacity={0.6} fontSize={9} fontFamily="var(--font-mono)" letterSpacing="0.06em">
                     {c.name.toUpperCase()}
                   </text>
                 </motion.g>
               );
             })}
+
+            {/* Metro Atlanta: the home market */}
+            <motion.g
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={view}
+              transition={{ duration: 0.8, delay: 1 }}
+            >
+              <circle cx={atl.x} cy={atl.y} r={44} fill="var(--color-royal)" fillOpacity={0.35} stroke="var(--color-sky)" strokeOpacity={0.6} strokeDasharray="3 4" />
+              {!reduce && (
+                <motion.circle
+                  cx={atl.x}
+                  cy={atl.y}
+                  r={20}
+                  fill="var(--color-sunlight)"
+                  initial={{ scale: 0.4, opacity: 0.55 }}
+                  animate={{ scale: 2, opacity: 0 }}
+                  transition={{ duration: 2.6, repeat: Infinity, ease: "easeOut", delay: 1 }}
+                  style={{ transformBox: "fill-box", transformOrigin: "center" }}
+                />
+              )}
+              <circle cx={atl.x} cy={atl.y} r={6} fill="var(--color-sunlight)" />
+              <text x={atl.x} y={atl.y + 66} textAnchor="middle" fill="var(--color-paper)" fontSize={15} fontFamily="var(--font-mono)" fontWeight={500} letterSpacing="0.08em">
+                METRO ATLANTA
+              </text>
+              <text x={atl.x} y={atl.y + 82} textAnchor="middle" fill="var(--color-amber)" fontSize={10} fontFamily="var(--font-mono)" letterSpacing="0.08em">
+                HOME BASE
+              </text>
+            </motion.g>
           </svg>
-          <p className="label-mono mt-4 text-center text-limestone/50">
-            Fig. 10 — State of Georgia · 159 counties
+          <p className="label-mono mt-4 text-center text-paper/55">
+            Fig. 10 — Metro Atlanta, with statewide service
           </p>
         </div>
       </div>

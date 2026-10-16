@@ -12,10 +12,10 @@ import { SectionLabel } from "./SectionLabel";
 type Errors = Partial<Record<"name" | "contact" | "email" | "zip", string>>;
 
 const SERVICES = [
-  "Window installation",
-  "Door installation",
-  "Replacement / retrofit",
-  "Materials only",
+  "Windows",
+  "Doors",
+  "Windows & doors",
+  "Product only",
   "Not sure yet",
 ];
 
@@ -33,7 +33,7 @@ function validate(data: FormData): Errors {
 }
 
 const field =
-  "mt-2 w-full rounded-[2px] border border-mullion bg-limestone px-4 py-3 text-ink placeholder:text-graphite/60 transition-colors duration-300 focus:border-ink focus:outline-none aria-[invalid=true]:border-clay";
+  "mt-2 w-full rounded-[2px] border border-line bg-paper px-4 py-3 text-ink placeholder:text-slate/60 transition-colors duration-300 focus:border-ink focus:outline-none aria-[invalid=true]:border-royal";
 
 export function Contact() {
   const [errors, setErrors] = useState<Errors>({});
@@ -56,32 +56,32 @@ export function Contact() {
 
   const err = (key: keyof Errors) =>
     errors[key] ? (
-      <p id={`${key}-error`} role="alert" className="mt-1.5 text-sm text-clay-deep">
+      <p id={`${key}-error`} role="alert" className="mt-1.5 text-sm text-royal-deep">
         {errors[key]}
       </p>
     ) : null;
 
   return (
-    <section id="contact" className="bg-limestone py-24 sm:py-36">
+    <section id="contact" className="bg-paper py-24 sm:py-36">
       <div className="mx-auto grid max-w-[1440px] gap-14 px-4 sm:px-8 lg:grid-cols-12">
         <Reveal className="lg:col-span-5">
-          <SectionLabel index="07">Free Quote</SectionLabel>
+          <SectionLabel index="08">Free Quote</SectionLabel>
           <h2 className="mt-6 font-display text-[clamp(2.25rem,4.5vw,4rem)] leading-[1.05] font-normal tracking-[-0.015em]">
-            Tell us about <em className="text-clay">your windows.</em>
+            Tell us about <em className="text-royal">your project.</em>
           </h2>
-          <p className="mt-6 max-w-md text-graphite">
-            A few details are enough to start. We&apos;ll call you back to talk through the job
-            and set up a time to measure.
+          <p className="mt-6 max-w-md text-slate">
+            Windows, doors or both: a few details are enough to start. We&apos;ll call you back to
+            talk through the job and set up a time to measure.
           </p>
 
-          <dl className="mt-10 border-t border-mullion">
+          <dl className="mt-10 border-t border-line">
             {[
               { k: "Call", v: business.phone, href: business.phoneHref },
               { k: "Email", v: business.email, href: `mailto:${business.email}` },
               { k: "Hours", v: business.hours },
             ].map((row) => (
-              <div key={row.k} className="flex items-baseline justify-between gap-6 border-b border-mullion py-4">
-                <dt className="label-mono text-graphite">{row.k}</dt>
+              <div key={row.k} className="flex items-baseline justify-between gap-6 border-b border-line py-4">
+                <dt className="label-mono text-slate">{row.k}</dt>
                 <dd className="text-right">
                   {row.href ? (
                     <a href={row.href} className="break-all underline-offset-4 hover:underline">
@@ -95,10 +95,10 @@ export function Contact() {
             ))}
           </dl>
 
-          <div className="relative mt-10 hidden aspect-[16/10] overflow-hidden lg:block">
+          <div className="relative mt-10 hidden aspect-[4/5] max-w-sm overflow-hidden lg:block">
             <Image
-              src={asset("/images/contact-interior.jpg")}
-              alt="Sunlit living room with tall windows"
+              src={asset("/images/work/entry-door-stone.jpg")}
+              alt="White entry door with sidelites and a half-round transom installed by DJ's"
               fill
               sizes="40vw"
               className="object-cover"
@@ -108,7 +108,7 @@ export function Contact() {
 
         <Reveal className="lg:col-span-7" delay={0.1}>
           {/* The form sits inside a window frame */}
-          <div className="border-[10px] border-plaster bg-limestone shadow-[inset_0_0_0_1px_var(--color-mullion),0_0_0_1px_var(--color-mullion)]">
+          <div className="border-[10px] border-mist bg-paper shadow-[inset_0_0_0_1px_var(--color-line),0_0_0_1px_var(--color-line)]">
             <AnimatePresence mode="wait" initial={false}>
               {sent ? (
                 <motion.div
@@ -123,7 +123,7 @@ export function Contact() {
                     <motion.path
                       d="M10 25l9 9 19-20"
                       fill="none"
-                      stroke="var(--color-clay)"
+                      stroke="var(--color-royal)"
                       strokeWidth={2}
                       initial={{ pathLength: 0 }}
                       animate={{ pathLength: 1 }}
@@ -131,14 +131,14 @@ export function Contact() {
                     />
                   </svg>
                   <h3 className="mt-6 font-display text-4xl">Thanks, we&apos;ve got it.</h3>
-                  <p className="mt-4 max-w-md text-graphite">
+                  <p className="mt-4 max-w-md text-slate">
                     This is a demo, so nothing was actually sent. On the live site, your request
                     goes straight to the DJ&apos;s team.
                   </p>
                   <button
                     type="button"
                     onClick={() => setSent(false)}
-                    className="label-mono mt-8 text-clay-deep underline-offset-4 hover:underline"
+                    className="label-mono mt-8 text-royal-deep underline-offset-4 hover:underline"
                   >
                     Send Another Request
                   </button>
@@ -155,7 +155,7 @@ export function Contact() {
                   transition={{ duration: 0.4 }}
                 >
                   <label className="sm:col-span-2">
-                    <span className="label-mono text-graphite">Full name</span>
+                    <span className="label-mono text-slate">Full name</span>
                     <input
                       name="name"
                       autoComplete="name"
@@ -166,7 +166,7 @@ export function Contact() {
                     {err("name")}
                   </label>
                   <label>
-                    <span className="label-mono text-graphite">Phone</span>
+                    <span className="label-mono text-slate">Phone</span>
                     <input
                       name="phone"
                       type="tel"
@@ -178,7 +178,7 @@ export function Contact() {
                     />
                   </label>
                   <label>
-                    <span className="label-mono text-graphite">Email</span>
+                    <span className="label-mono text-slate">Email</span>
                     <input
                       name="email"
                       type="email"
@@ -192,11 +192,11 @@ export function Contact() {
                   </label>
                   {errors.contact && <div className="-mt-4 sm:col-span-2">{err("contact")}</div>}
                   <label>
-                    <span className="label-mono text-graphite">City</span>
+                    <span className="label-mono text-slate">City</span>
                     <input name="city" autoComplete="address-level2" className={field} />
                   </label>
                   <label>
-                    <span className="label-mono text-graphite">ZIP code</span>
+                    <span className="label-mono text-slate">ZIP code</span>
                     <input
                       name="zip"
                       inputMode="numeric"
@@ -209,7 +209,7 @@ export function Contact() {
                     {err("zip")}
                   </label>
                   <fieldset className="sm:col-span-2">
-                    <legend className="label-mono text-graphite">What do you need?</legend>
+                    <legend className="label-mono text-slate">What do you need?</legend>
                     <div className="mt-3 flex flex-wrap gap-2">
                       {SERVICES.map((s, i) => (
                         <label key={s} className="cursor-pointer">
@@ -220,7 +220,7 @@ export function Contact() {
                             defaultChecked={i === 0}
                             className="peer sr-only"
                           />
-                          <span className="block rounded-[2px] border border-mullion px-4 py-2 text-[0.9375rem] pressable peer-checked:border-pine peer-checked:bg-pine peer-checked:text-limestone peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-clay hover:border-ink">
+                          <span className="block rounded-[2px] border border-line px-4 py-2 text-[0.9375rem] pressable peer-checked:border-navy peer-checked:bg-navy peer-checked:text-paper peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-royal hover:border-ink">
                             {s}
                           </span>
                         </label>
@@ -228,7 +228,7 @@ export function Contact() {
                     </div>
                   </fieldset>
                   <label className="sm:col-span-2">
-                    <span className="label-mono text-graphite">Project details (optional)</span>
+                    <span className="label-mono text-slate">Project details (optional)</span>
                     <textarea
                       name="message"
                       rows={4}
@@ -237,10 +237,10 @@ export function Contact() {
                     />
                   </label>
                   <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-sm text-graphite">No obligation. We usually call back within one business day.</p>
+                    <p className="text-sm text-slate">No obligation. We usually call back within one business day.</p>
                     <button
                       type="submit"
-                      className="rounded-[2px] bg-clay px-8 py-4 font-medium text-limestone pressable hover:bg-clay-deep"
+                      className="rounded-[2px] bg-royal px-8 py-4 font-medium text-paper pressable hover:bg-royal-deep"
                     >
                       Request My Free Quote
                     </button>

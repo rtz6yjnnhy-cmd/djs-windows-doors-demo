@@ -6,6 +6,7 @@ import { Header } from "@/components/Header";
 import { Hero } from "@/components/Hero";
 import { MobileCtaBar } from "@/components/MobileCtaBar";
 import { MotionProvider } from "@/components/MotionProvider";
+import { Process3D } from "@/components/Process3D";
 import { ServiceArea } from "@/components/ServiceArea";
 import { Services } from "@/components/Services";
 import { Testimonials } from "@/components/Testimonials";
@@ -16,7 +17,7 @@ export default function Home() {
     <MotionProvider>
       <a
         href="#main"
-        className="sr-only z-[60] bg-ink px-4 py-2 text-limestone focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
+        className="sr-only z-[60] bg-navy px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
       >
         Skip to content
       </a>
@@ -24,6 +25,7 @@ export default function Home() {
       <main id="main">
         <Hero />
         <Services />
+        <Process3D />
         <WhyUs />
         <BeforeAfter />
         <Gallery />
