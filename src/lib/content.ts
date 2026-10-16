@@ -136,8 +136,8 @@ export const gallery = [
 ];
 
 export const heroPhotos = [
-  { image: asset("/images/work/arched-windows-evening.jpg"), alt: "Arched windows glowing warm at dusk", caption: "Windows" },
-  { image: asset("/images/work/navy-entry-door.jpg"), alt: "Navy entry door with half glass and sidelites", caption: "Doors" },
+  { image: asset("/images/work/hero-arched-windows.jpg"), alt: "Arched windows glowing warm at dusk", caption: "Windows" },
+  { image: asset("/images/work/hero-navy-door.jpg"), alt: "Navy entry door with half glass and sidelites", caption: "Doors" },
 ];
 
 // Sample reviews for the demo; must be replaced with real ones.

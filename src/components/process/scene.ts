@@ -3,7 +3,6 @@
 // whole timeline: measure → old unit out → new unit in → seal → warm light.
 
 import * as THREE from "three";
-import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 
 export type Kind = "window" | "door";
 
@@ -14,6 +13,8 @@ export type ProcessScene = {
   setActive: (active: boolean) => void;
   resize: () => void;
   dispose: () => void;
+  /** Resolves once shaders are compiled (off the main thread where supported). */
+  ready: Promise<void>;
 };
 
 const COLORS = {
@@ -126,7 +127,7 @@ function buildUnit(kind: Kind, fresh: boolean): Unit {
   const group = new THREE.Group();
   const frameMat = new THREE.MeshStandardMaterial(
     fresh
-      ? { color: COLORS.navy, roughness: 0.32, metalness: 0.35, transparent: true }
+      ? { color: COLORS.navy, roughness: 0.42, metalness: 0.05, transparent: true }
       : { color: COLORS.oldFrame, roughness: 1, metalness: 0, transparent: true },
   );
   const materials = [frameMat];
@@ -138,7 +139,7 @@ function buildUnit(kind: Kind, fresh: boolean): Unit {
   if (kind === "window") {
     glass = new THREE.MeshStandardMaterial(
       fresh
-        ? { color: COLORS.newGlass, roughness: 0.03, metalness: 0.2, transparent: true, opacity: 0.22, envMapIntensity: 2 }
+        ? { color: COLORS.newGlass, roughness: 0.08, metalness: 0, transparent: true, opacity: 0.26, emissive: 0x2a4a7a, emissiveIntensity: 0.25 }
         : { color: COLORS.oldGlass, roughness: 1, transparent: true, opacity: 0.86 },
     );
     materials.push(glass);
@@ -152,17 +153,17 @@ function buildUnit(kind: Kind, fresh: boolean): Unit {
   } else {
     const panelMat = new THREE.MeshStandardMaterial(
       fresh
-        ? { color: COLORS.navy, roughness: 0.4, metalness: 0.3, transparent: true }
+        ? { color: COLORS.navy, roughness: 0.45, metalness: 0.05, transparent: true }
         : { color: COLORS.oldPanel, roughness: 0.95, transparent: true },
     );
     materials.push(panelMat);
     group.add(box(inner.w, inner.h, 0.06, panelMat, 0, 0, 0));
     if (fresh) {
       // Tall glass lite and a long pull handle, after the door in the logo
-      glass = new THREE.MeshStandardMaterial({ color: COLORS.newGlass, roughness: 0.05, metalness: 0.1, transparent: true, opacity: 0.55, envMapIntensity: 1.6 });
+      glass = new THREE.MeshStandardMaterial({ color: COLORS.newGlass, roughness: 0.08, metalness: 0, transparent: true, opacity: 0.6, emissive: 0x2a4a7a, emissiveIntensity: 0.3 });
       materials.push(glass);
       group.add(box(0.16, inner.h * 0.78, 0.065, glass, -inner.w * 0.22, 0, 0));
-      const handle = new THREE.MeshStandardMaterial({ color: COLORS.amber, roughness: 0.25, metalness: 0.8, transparent: true });
+      const handle = new THREE.MeshStandardMaterial({ color: COLORS.amber, roughness: 0.3, metalness: 0.15, emissive: COLORS.amber, emissiveIntensity: 0.2, transparent: true });
       materials.push(handle);
       group.add(box(0.025, 0.55, 0.05, handle, inner.w * 0.36, 0.02, 0.06));
     } else {
@@ -173,7 +174,7 @@ function buildUnit(kind: Kind, fresh: boolean): Unit {
         group.add(box(inner.w * 0.32, ph, 0.07, inset, -inner.w * 0.2, y, 0));
         group.add(box(inner.w * 0.32, ph, 0.07, inset, inner.w * 0.2, y, 0));
       }
-      const knob = new THREE.MeshStandardMaterial({ color: 0x9a9182, roughness: 0.6, metalness: 0.4, transparent: true });
+      const knob = new THREE.MeshStandardMaterial({ color: 0x9a9182, roughness: 0.6, metalness: 0.1, transparent: true });
       materials.push(knob);
       const k = new THREE.Mesh(new THREE.SphereGeometry(0.035, 16, 12), knob);
       k.position.set(inner.w * 0.38, -0.02, 0.07);
@@ -189,7 +190,7 @@ function buildUnit(kind: Kind, fresh: boolean): Unit {
 // Thin amber bead around the opening; each bar scales in along its length.
 function buildSeal(kind: Kind) {
   const { w, h, sill } = SPECS[kind];
-  const mat = new THREE.MeshStandardMaterial({ color: COLORS.amber, roughness: 0.4, metalness: 0.3, emissive: COLORS.amber, emissiveIntensity: 0.25 });
+  const mat = new THREE.MeshStandardMaterial({ color: COLORS.amber, roughness: 0.4, metalness: 0.1, emissive: COLORS.amber, emissiveIntensity: 0.3 });
   const t = 0.022;
   const z = WALL.d / 2 + 0.005;
   const bars = [
@@ -229,9 +230,6 @@ export function createProcessScene(canvas: HTMLCanvasElement, opts: { reduceMoti
   renderer.toneMappingExposure = 1.05;
 
   const scene = new THREE.Scene();
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const envTex = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environment = envTex;
 
   const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 50);
 
@@ -242,6 +240,10 @@ export function createProcessScene(canvas: HTMLCanvasElement, opts: { reduceMoti
   const rim = new THREE.DirectionalLight(0x8fb3e8, 0.6);
   rim.position.set(-4, 2, -3);
   scene.add(rim);
+  // Soft fill from the viewer side, standing in for an environment map
+  const fill = new THREE.DirectionalLight(0xdfe8f7, 0.55);
+  fill.position.set(0, 2, 6);
+  scene.add(fill);
 
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(4.5, 48),
@@ -341,7 +343,9 @@ export function createProcessScene(canvas: HTMLCanvasElement, opts: { reduceMoti
     camera.lookAt(target);
   };
 
+  let compiled = false;
   const render = () => {
+    if (!compiled) return;
     pointer.sx += (pointer.x - pointer.sx) * 0.08;
     pointer.sy += (pointer.y - pointer.sy) * 0.08;
     placeCamera();
@@ -361,7 +365,20 @@ export function createProcessScene(canvas: HTMLCanvasElement, opts: { reduceMoti
   apply();
   resize();
 
+  // Compile every material up front, without blocking the page where the
+  // browser supports parallel shader compilation, then draw the first frame.
+  // Everything is made visible for the compile (compile skips hidden objects,
+  // and the door set starts hidden), then the timeline state is restored.
+  placeCamera();
+  scene.traverse((o) => (o.visible = true));
+  const ready = renderer.compileAsync(scene, camera).then(() => {
+    apply();
+    compiled = true;
+    render();
+  });
+
   return {
+    ready,
     setProgress(p) {
       progress = clamp01(p);
       apply();
@@ -399,8 +416,6 @@ export function createProcessScene(canvas: HTMLCanvasElement, opts: { reduceMoti
       });
       tex.dispose();
       glowTex.dispose();
-      envTex.dispose();
-      pmrem.dispose();
       renderer.dispose();
     },
   };

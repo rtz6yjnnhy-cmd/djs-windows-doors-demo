@@ -31,6 +31,99 @@
   text-transform: uppercase;
 }
 
+/* Hero entrance in plain CSS: it starts on first paint, without waiting for
+   JavaScript, so slow connections still see the headline right away. */
+@keyframes enter-rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+@keyframes enter-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+@keyframes enter-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes enter-open {
+  from {
+    clip-path: inset(50% 50% 50% 50%);
+  }
+}
+@keyframes enter-settle {
+  from {
+    transform: scale(1.15);
+  }
+}
+@keyframes enter-draw-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes enter-draw-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@layer components {
+  .enter {
+    animation-duration: var(--dur, 1s);
+    animation-timing-function: var(--ease-frame);
+    animation-fill-mode: both;
+    animation-delay: var(--d, 0ms);
+  }
+  .enter-rise {
+    animation-name: enter-rise;
+  }
+  .enter-fade-up {
+    animation-name: enter-fade-up;
+  }
+  .enter-fade {
+    animation-name: enter-fade;
+  }
+  .enter-open {
+    animation-name: enter-open;
+  }
+  .enter-settle {
+    animation-name: enter-settle;
+  }
+  .enter-draw-x {
+    animation-name: enter-draw-x;
+  }
+  .enter-draw-y {
+    animation-name: enter-draw-y;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .enter-fade-up,
+    .enter-open {
+      animation-name: enter-fade;
+      animation-duration: 0.6s;
+    }
+    .enter-rise,
+    .enter-settle,
+    .enter-draw-x,
+    .enter-draw-y {
+      animation: none;
+    }
+  }
+}
+
+/* Loading indicator in the 3D section: a sash sliding up and down */
+@keyframes sash {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
 /* Press feedback for buttons and button-like links */
 @utility pressable {
   transition-property: background-color, border-color, color, scale;

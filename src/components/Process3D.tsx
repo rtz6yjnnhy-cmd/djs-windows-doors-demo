@@ -27,6 +27,7 @@ export function Process3D() {
   const [kind, setKind] = useState<Kind>("window");
   const [step, setStep] = useState(0);
   const [failed, setFailed] = useState(false);
+  const [ready, setReady] = useState(false);
 
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
 
@@ -44,23 +45,32 @@ export function Process3D() {
     let scene: ProcessScene | null = null;
 
     const visibility = new IntersectionObserver(([entry]) => scene?.setActive(entry.isIntersecting));
+    // Prepare the scene well before it scrolls into view, in idle time, so the
+    // setup never lands in the middle of a scroll.
+    const idle = (fn: () => void) =>
+      typeof window.requestIdleCallback === "function" ? window.requestIdleCallback(fn, { timeout: 1500 }) : setTimeout(fn, 200);
     const loader = new IntersectionObserver(
-      async ([entry]) => {
+      ([entry]) => {
         if (!entry.isIntersecting || scene) return;
         loader.disconnect();
-        try {
-          const { createProcessScene } = await import("./process/scene");
-          if (disposed) return;
-          scene = createProcessScene(canvas, { reduceMotion: !!reduce });
-          sceneRef.current = scene;
-          scene.setKind(kind);
-          scene.setProgress(scrollYProgress.get());
-          visibility.observe(section);
-        } catch {
-          setFailed(true);
-        }
+        idle(async () => {
+          try {
+            const { createProcessScene } = await import("./process/scene");
+            if (disposed) return;
+            scene = createProcessScene(canvas, { reduceMotion: !!reduce });
+            sceneRef.current = scene;
+            scene.setKind(kind);
+            scene.setProgress(scrollYProgress.get());
+            await scene.ready;
+            if (disposed) return;
+            visibility.observe(section);
+            setReady(true);
+          } catch {
+            setFailed(true);
+          }
+        });
       },
-      { rootMargin: "50% 0px" },
+      { rootMargin: "150% 0px" },
     );
     loader.observe(section);
 
@@ -187,6 +197,17 @@ export function Process3D() {
               />
             ) : (
               <canvas ref={canvasRef} role="img" aria-label={label} className="absolute inset-0 h-full w-full" />
+            )}
+            {!ready && !failed && (
+              <div role="status" className="absolute inset-0 flex flex-col items-center justify-center gap-5">
+                {/* A small window whose sash slides while Three.js loads */}
+                <span aria-hidden className="relative block h-16 w-12 overflow-hidden border border-paper/40">
+                  <span className="absolute inset-x-0 top-1/2 h-px bg-paper/25" />
+                  <span className="absolute inset-y-0 left-1/2 w-px bg-paper/25" />
+                  <span className="absolute inset-x-0 bottom-0 h-1/2 animate-[sash_1.6s_var(--ease-frame)_infinite_alternate] bg-sunlight/30 motion-reduce:animate-none" />
+                </span>
+                <span className="label-mono text-paper/70">Loading 3D view…</span>
+              </div>
             )}
             <p className="label-mono pointer-events-none absolute bottom-3 left-4 text-paper/70">
               Fig. 02 — {kind === "window" ? "Window" : "Door"} replacement · step {step + 1}/4

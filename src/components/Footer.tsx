@@ -1,4 +1,5 @@
 import { business, nav } from "@/lib/content";
+import { CurrentYear } from "./CurrentYear";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -28,7 +29,7 @@ export function Footer() {
             <p className="label-mono text-paper/50">Contact</p>
             <ul className="mt-4 space-y-2">
               <li>
-                <a href={business.phoneHref} className="hover:text-sunlight">
+                <a href={business.phoneHref} className="hover:text-sunlight" aria-label={`Call ${business.phone}`}>
                   {business.phone}
                 </a>
               </li>
@@ -42,8 +43,10 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="label-mono flex flex-col gap-2 pt-8 text-paper/45 sm:flex-row sm:justify-between">
-          <p>© 2026 {business.name}</p>
+        <div className="label-mono flex flex-col gap-2 pt-8 text-paper/60 sm:flex-row sm:justify-between">
+          <p>
+            © <CurrentYear /> {business.name} · <a href={business.phoneHref} className="hover:text-sunlight">{business.phone}</a>
+          </p>
           <p>Demo site · Photos from DJ&apos;s jobs</p>
         </div>
       </div>
