@@ -202,7 +202,7 @@ Todas as fotos do site são **obras reais da DJ's** (11 fotos de celular enviada
 - [x] Fotos reais de obras (11 fotos integradas)
 - [ ] Confirmar que as fotos podem ser publicadas (as casas são de clientes) e se há cidades para as legendas
 - [ ] Mais pares antes/depois de **portas** vistas de fora, e fotos horizontais se possível (para usos em faixa larga)
-- [ ] E-mail real de contato (o atual `quotes@djswindowsanddoors.com` é provisório)
+- [x] E-mail real de contato: `djswindowsinstallation@gmail.com`
 - [ ] Confirmar afirmações: equipe própria do início ao fim, orçamento grátis, horário, atendimento estadual em projetos maiores
 - [ ] Depoimentos reais (os atuais são exemplos e estão marcados como tal)
 - [ ] Lista final de cidades da região metropolitana atendidas

@@ -1,6 +1,5 @@
-// Demo content. Photos are real DJ's jobs (public/images/work, optimized from
-// public/images/real). The email is still a placeholder until DJ's confirms
-// theirs; confirm every claim with the client before going live.
+// Site content. Photos are real DJ's jobs (public/images/work, optimized from
+// public/images/real). Confirm every claim with the client before going live.
 
 import { asset } from "./asset";
 
@@ -8,7 +7,9 @@ export const business = {
   name: "DJ's Windows and Doors Installation LLC",
   phone: "(470) 659-8625",
   phoneHref: "tel:+14706598625",
-  email: "quotes@djswindowsanddoors.com",
+  email: "djswindowsinstallation@gmail.com",
+  // Quote form delivery (FormSubmit emails each request to the address above)
+  quoteEndpoint: "https://formsubmit.co/ajax/djswindowsinstallation@gmail.com",
   hours: "Mon–Sat · 7am–6pm",
 };
 

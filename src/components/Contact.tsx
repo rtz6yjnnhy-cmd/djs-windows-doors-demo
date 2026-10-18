@@ -19,6 +19,9 @@ const SERVICES = [
   "Not sure yet",
 ];
 
+// Character limits, enforced by the inputs and again before sending
+const MAX = { name: 100, phone: 30, email: 254, city: 80, zip: 5, message: 2000 } as const;
+
 function validate(data: FormData): Errors {
   const errors: Errors = {};
   const name = String(data.get("name") ?? "").trim();
@@ -32,20 +35,67 @@ function validate(data: FormData): Errors {
   return errors;
 }
 
+// The site is static (GitHub Pages), so requests go through FormSubmit, which
+// emails them to the business inbox. The first request triggers a one-time
+// activation email that has to be confirmed before requests are delivered.
+async function sendQuote(data: FormData) {
+  const value = (k: string) => {
+    const v = String(data.get(k) ?? "").trim();
+    return k in MAX ? v.slice(0, MAX[k as keyof typeof MAX]) : v;
+  };
+  if (value("_honey")) return; // filled by bots only
+  const name = value("name");
+  const res = await fetch(business.quoteEndpoint, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({
+      _subject: `New estimate request from ${name}`,
+      _template: "table",
+      _captcha: "false",
+      // Also checked by FormSubmit, which drops the request if it is filled
+      _honey: value("_honey"),
+      ...(value("email") ? { _replyto: value("email") } : {}),
+      Name: name,
+      Phone: value("phone") || "—",
+      Email: value("email") || "—",
+      City: value("city") || "—",
+      "ZIP code": value("zip") || "—",
+      Service: value("service"),
+      "Project details": value("message") || "—",
+    }),
+  });
+  const json = (await res.json().catch(() => null)) as { success?: string | boolean } | null;
+  if (!res.ok || String(json?.success) !== "true") throw new Error("Request not delivered");
+}
+
 const field =
   "mt-2 w-full rounded-[2px] border border-line bg-paper px-4 py-3 text-ink placeholder:text-slate/60 transition-colors duration-300 focus:border-ink focus:outline-none aria-[invalid=true]:border-royal";
 
 export function Contact() {
   const [errors, setErrors] = useState<Errors>({});
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [failed, setFailed] = useState(false);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (sending) return;
     const form = e.currentTarget;
-    const found = validate(new FormData(form));
+    const data = new FormData(form);
+    const found = validate(data);
     setErrors(found);
     if (Object.keys(found).length === 0) {
-      setSent(true);
+      setSending(true);
+      setFailed(false);
+      try {
+        await sendQuote(data);
+        form.reset();
+        setSent(true);
+      } catch {
+        setFailed(true);
+      } finally {
+        setSending(false);
+      }
       return;
     }
     // Move focus to the first field that needs fixing
@@ -132,8 +182,8 @@ export function Contact() {
                   </svg>
                   <h3 className="mt-6 font-display text-4xl">Thanks, we&apos;ve got it.</h3>
                   <p className="mt-4 max-w-md text-slate">
-                    This is a demo, so nothing was actually sent. On the live site, your request
-                    goes straight to the DJ&apos;s team.
+                    Your request is on its way to the DJ&apos;s team. We usually call back within
+                    one business day.
                   </p>
                   <button
                     type="button"
@@ -154,11 +204,14 @@ export function Contact() {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.4 }}
                 >
+                  {/* Honeypot: hidden from people, filled in by spam bots */}
+                  <input type="text" name="_honey" tabIndex={-1} autoComplete="off" aria-hidden className="hidden" />
                   <label className="sm:col-span-2">
                     <span className="label-mono text-slate">Full name</span>
                     <input
                       name="name"
                       autoComplete="name"
+                      maxLength={MAX.name}
                       className={field}
                       aria-invalid={!!errors.name}
                       aria-describedby={errors.name ? "name-error" : undefined}
@@ -172,6 +225,7 @@ export function Contact() {
                       type="tel"
                       autoComplete="tel"
                       inputMode="tel"
+                      maxLength={MAX.phone}
                       className={field}
                       aria-invalid={!!errors.contact}
                       aria-describedby={errors.contact ? "contact-error" : undefined}
@@ -184,6 +238,7 @@ export function Contact() {
                       type="email"
                       autoComplete="email"
                       spellCheck={false}
+                      maxLength={MAX.email}
                       className={field}
                       aria-invalid={!!errors.email || !!errors.contact}
                       aria-describedby={errors.email ? "email-error" : undefined}
@@ -193,7 +248,7 @@ export function Contact() {
                   {errors.contact && <div className="-mt-4 sm:col-span-2">{err("contact")}</div>}
                   <label>
                     <span className="label-mono text-slate">City</span>
-                    <input name="city" autoComplete="address-level2" className={field} />
+                    <input name="city" autoComplete="address-level2" maxLength={MAX.city} className={field} />
                   </label>
                   <label>
                     <span className="label-mono text-slate">ZIP code</span>
@@ -201,7 +256,7 @@ export function Contact() {
                       name="zip"
                       inputMode="numeric"
                       autoComplete="postal-code"
-                      maxLength={5}
+                      maxLength={MAX.zip}
                       className={field}
                       aria-invalid={!!errors.zip}
                       aria-describedby={errors.zip ? "zip-error" : undefined}
@@ -232,17 +287,33 @@ export function Contact() {
                     <textarea
                       name="message"
                       rows={4}
+                      maxLength={MAX.message}
                       placeholder="e.g. 8 double-hung windows and a back door, about 36 × 60 in…"
                       className={`${field} resize-y`}
                     />
                   </label>
+                  {failed && (
+                    <p role="alert" className="text-sm text-royal-deep sm:col-span-2">
+                      We couldn&apos;t send your request. Please try again, call{" "}
+                      <a href={business.phoneHref} className="underline underline-offset-4">
+                        {business.phone}
+                      </a>{" "}
+                      or email{" "}
+                      <a href={`mailto:${business.email}`} className="break-all underline underline-offset-4">
+                        {business.email}
+                      </a>
+                      .
+                    </p>
+                  )}
                   <div className="flex flex-col gap-4 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-sm text-slate">No obligation. We usually call back within one business day.</p>
                     <button
                       type="submit"
-                      className="rounded-[2px] bg-royal px-8 py-4 font-medium text-paper pressable hover:bg-royal-deep"
+                      disabled={sending}
+                      aria-busy={sending}
+                      className="rounded-[2px] bg-royal px-8 py-4 font-medium text-paper pressable hover:bg-royal-deep disabled:cursor-wait disabled:opacity-70"
                     >
-                      Request My Free Quote
+                      {sending ? "Sending…" : "Request My Free Quote"}
                     </button>
                   </div>
                 </motion.form>

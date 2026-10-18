@@ -1,8 +1,8 @@
 import { business } from "./content";
 
-// Public URL of the deployed site (GitHub Pages project site). Used for
+// Public URL of the site (GitHub Pages with a custom domain). Used for
 // canonical links, Open Graph, sitemap, robots and structured data.
-export const SITE_URL = "https://rtz6yjnnhy-cmd.github.io/djs-windows-doors-demo";
+export const SITE_URL = "https://djswindowsanddoors.com";
 
 export const site = {
   name: business.name,
@@ -26,6 +26,7 @@ export const businessJsonLd = {
   description: site.description,
   url: `${SITE_URL}/`,
   telephone: "+1-470-659-8625",
+  email: "djswindowsinstallation@gmail.com",
   logo: `${SITE_URL}/icons/icon-512.png`,
   image: `${SITE_URL}/${site.ogImage}`,
   areaServed: [

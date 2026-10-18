@@ -30,7 +30,7 @@ jobs:
 
       - run: npm run lint
 
-      # Static export to ./out, with basePath /djs-windows-doors-demo (see next.config.ts)
+      # Static export to ./out, served from the root of djswindowsanddoors.com
       - run: npm run build
 
       - uses: actions/configure-pages@v5

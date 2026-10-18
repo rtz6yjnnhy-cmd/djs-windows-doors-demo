@@ -23,9 +23,8 @@ const jetbrains = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
-// Icons are declared here (not as app/ file conventions) because browsers look
-// for /favicon.ico at the domain root, outside the GitHub Pages project path.
-// The web app manifest comes from manifest.ts.
+// Icons are declared here (not as app/ file conventions) so every size is
+// listed in one place. The web app manifest comes from manifest.ts.
 export const metadata: Metadata = {
   metadataBase: new URL(`${SITE_URL}/`),
   title: site.title,
@@ -33,6 +32,8 @@ export const metadata: Metadata = {
   applicationName: site.shortName,
   alternates: { canonical: "./" },
   formatDetection: { telephone: true },
+  // GitHub Pages cannot send HTTP headers, so the referrer policy is a meta tag
+  referrer: "strict-origin-when-cross-origin",
   icons: {
     icon: [
       { url: asset("/favicon.ico"), sizes: "16x16 32x32 48x48" },

@@ -47,7 +47,7 @@ export function Footer() {
           <p>
             © <CurrentYear /> {business.name} · <a href={business.phoneHref} className="hover:text-sunlight">{business.phone}</a>
           </p>
-          <p>Demo site · Photos from DJ&apos;s jobs</p>
+          <p>Official website · All photos are DJ&apos;s own jobs</p>
         </div>
       </div>
     </footer>
